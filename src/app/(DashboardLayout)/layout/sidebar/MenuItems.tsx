@@ -38,6 +38,12 @@ const Menuitems = [
     icon: IconLayoutDashboard,
     href: "/my-modules",
   },
+  {
+    id: uniqueId(),
+    title: "My Learning",
+    icon: IconAperture,
+    href: "/my-learning",
+  },
   // {
   //   navlabel: true,
   //   subheader: "Auth",

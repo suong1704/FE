@@ -1,13 +1,9 @@
-/* eslint-disable @next/next/no-assign-module-variable */
 import { createSlice } from "@reduxjs/toolkit";
 
-import {
-  handlePostNewModule
-} from "./action";
+import { handleGetAllModule, handlePostNewModule } from "./action";
 interface Module {
-
-  title: string,
-  description: string
+  title: string;
+  description: string;
 }
 export interface PayloadNewModule {
   moduleData: Module;
@@ -15,10 +11,9 @@ export interface PayloadNewModule {
 
 export interface InitialState {
   dataModuleUser: [];
- 
 }
 const initialState: InitialState = {
-  dataModuleUser: []
+  dataModuleUser: [],
 };
 
 const moduleSlice = createSlice({
@@ -29,6 +24,7 @@ const moduleSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(handlePostNewModule.fulfilled, (state, action) => {});
+    builder.addCase(handleGetAllModule.fulfilled, (state, action) => {});
   },
 });
 

@@ -59,9 +59,11 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
     // localStorage.setItem("isLogin", "true");
     dispatch(handleLoginAsync({ username, password }))
       .then((res) => {
-        // console.log(res.payload.user);
-        router.push("/");
-        // if (res.payload.user !== null) router.push("/");
+        console.log(res.payload.user);
+        // router.push("/");
+        if (res.payload.user !== null) {
+          router.push("/");
+        }
       })
       .catch((err) => {
         console.log("failed", err);

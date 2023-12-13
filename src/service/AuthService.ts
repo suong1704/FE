@@ -11,8 +11,8 @@ export interface RegisterRequest {
   password: string;
 }
 
-const LOGIN = `http://localhost:8000/api/v1/auth/login`;
-const REGISTER = `http://localhost:8000/api/v1/auth/register`;
+const LOGIN = `/auth/login`;
+const REGISTER = `/auth/register`;
 
 const login = (credentials: LoginCredentials) =>
   axios.post(`${LOGIN}`, credentials);

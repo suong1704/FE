@@ -1,17 +1,27 @@
-
 import axios from "axios";
 import { isUndefined } from "lodash";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
 
+const getToken = () => {
+  if (typeof window !== "undefined") {
+    console.log("toke1n", localStorage.getItem("token"));
+    return JSON.parse(localStorage.getItem("token") || "");
+  }
+};
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_GATEWAY_URL,
+  baseURL: "http://localhost:8000/api/v1",
+  headers: {
+    "Content-Type": "application/json",
+    // Authorization: `Bearer ${getToken()}`,
+  },
 });
 
 type PROPS = {
   store: any;
   children: any;
 };
+
 const AxiosInterceptor: React.FC<PROPS> = ({ store, children }) => {
   const router = useRouter();
   instance.defaults.headers.post["Content-Type"] = "application/json";
@@ -19,8 +29,13 @@ const AxiosInterceptor: React.FC<PROPS> = ({ store, children }) => {
 
   instance.interceptors.request.use(
     (config: any) => {
-      if (localStorage.getItem("token")) {
-        config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+      // if (localStorage.getItem("token")) {
+      //   console.log("token", localStorage.getItem("token"));
+      //   config.headers.Authorization = `Bearer ${getToken()}`;
+      // }
+      if (typeof window !== "undefined") {
+        const accessToken = JSON.parse(localStorage.getItem("token") || "");
+        config.headers["Authorization"] = `Bearer ${accessToken}`;
       }
       return config;
     },
@@ -70,7 +85,7 @@ const AxiosInterceptor: React.FC<PROPS> = ({ store, children }) => {
     return () => {
       axios.interceptors.response.eject(intercetpor);
     };
-  }, []);
+  }, [router]);
   return children;
 };
 

@@ -51,7 +51,7 @@ export const auth = createSlice({
         state.isAuthenticated = true;
         state.dataProfile = payload.user;
         localStorage.setItem("token", payload.jwt);
-        localStorage.setItem("user", JSON.stringify(payload?.user));
+        localStorage.setItem("userId", payload?.user.userId);
       })
       .addCase(handleRegisterAsync.fulfilled, (state, { payload }) => {
         if (payload !== undefined) {
