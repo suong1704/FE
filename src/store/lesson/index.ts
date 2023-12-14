@@ -8,9 +8,23 @@ export const getListLessonByModuleId = createAsyncThunk(
 );
 
 interface Lesson {
-
+  lessonId: number,
   title: string,
-  description: string
+  listeningContent: ListeningContent,
+  speakingContent: string,
+  createdAt: Date,
+  moduleId: number,
+  deleted: boolean
+}
+interface ListeningContent{
+  audioUrl: string,
+  listQuestion: Question[]
+}
+interface Question{
+  question: string,
+  answers: string[],
+  correctAnswerId: number,
+  explanation: string
 }
 export interface PayloadLesson {
   LessonData: Lesson;
@@ -45,3 +59,5 @@ export const { clearDataDetail } =
   Lesson.actions;
 
 export default Lesson.reducer;
+
+export type { Lesson, Question }

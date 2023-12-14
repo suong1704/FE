@@ -3,7 +3,7 @@ import lesson from "./lesson";
 import module from "./module/index";
 import auth from "./auth";
 import Toast from './toast/index';
-
+import { history } from "./history/historySlice"
 
 export const store = configureStore({
   reducer: {
@@ -11,7 +11,7 @@ export const store = configureStore({
     auth,
     lesson,
     module,
-  
+    history
   },
 });
 

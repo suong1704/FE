@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "@emotion/react";
 import { useAppDispatch } from "@/store/hooks";
 import { handleLoginAsync } from "@/store/auth";
+import Toast from "@/components/Toast";
+import { handleToast } from "@/store/toast";
 
 interface loginType {
   title?: string;
@@ -27,9 +29,9 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
   const theme = useTheme();
   const dispatch = useAppDispatch();
 
-  const [username, setUserName] = useState("");
+  const [username, setUserName] = useState("learner2");
   const [userNameError, setUserNameError] = useState<string>("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("123456");
   const [passwordError, setPasswordError] = useState<string>("");
 
   const handleChangeUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,8 +63,15 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
       .then((res) => {
         console.log(res.payload.user);
         // router.push("/");
-        if (res.payload.user !== null) {
+        if (res.payload.user) {
           router.push("/");
+        }
+        else{
+          dispatch(handleToast({
+            open: true,
+            status: "error",
+            message: "Login fail",
+          }));
         }
       })
       .catch((err) => {
@@ -93,6 +102,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             variant="outlined"
             fullWidth
             onChange={handleChangeUsername}
+            value={username}
           />
         </Box>
         <Box mt="25px">
@@ -109,6 +119,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             variant="outlined"
             fullWidth
             onChange={handleChangePassword}
+            value={password}
           />
         </Box>
         <Stack
@@ -140,6 +151,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
         </Button>
       </Box>
       {subtitle}
+      <Toast />
     </>
   );
 };

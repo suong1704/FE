@@ -3,13 +3,14 @@ import { Select, MenuItem } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import dynamic from "next/dynamic";
+import { useAppSelector } from '@/store/hooks';
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 
 const SalesOverview = () => {
-
     // select
     const [month, setMonth] = React.useState('1');
+    const histories = useAppSelector(state => state.history.histories);
 
     const handleChange = (event: any) => {
         setMonth(event.target.value);
@@ -66,9 +67,14 @@ const SalesOverview = () => {
         },
         yaxis: {
             tickAmount: 4,
+            labels: {
+                formatter: function(val: any) {
+                  return val.toFixed(0);
+                }
+              }
         },
         xaxis: {
-            categories: ['16/08', '17/08', '18/08', '19/08', '20/08', '21/08', '22/08', '23/08'],
+            categories: histories.map(h => h.module.title),
             axisBorder: {
                 show: false,
             },
@@ -80,18 +86,20 @@ const SalesOverview = () => {
     };
     const seriescolumnchart: any = [
         {
-            name: 'Eanings this month',
-            data: [355, 390, 300, 350, 390, 180, 355, 390],
-        },
-        {
-            name: 'Expense this month',
-            data: [280, 250, 325, 215, 250, 310, 280, 250],
+            name: 'Learned lesson',
+            data: histories.map(h => {
+                console.log(h.module.title);
+                return h.histories.filter(hh => {
+                    console.log(new Date(hh.updateAt).getDate(), new Date().getDate());
+                    return new Date(hh.updateAt).getDate() == new Date().getDate();
+                }).length;
+            }),
         },
     ];
 
     return (
-
-        <DashboardCard title="Learning Today" action={
+        <DashboardCard 
+            title="Learning Today" action={
             <Select
                 labelId="month-dd"
                 id="month-dd"
@@ -99,9 +107,7 @@ const SalesOverview = () => {
                 size="small"
                 onChange={handleChange}
             >
-                <MenuItem value={1}>March 2023</MenuItem>
-                <MenuItem value={2}>April 2023</MenuItem>
-                <MenuItem value={3}>May 2023</MenuItem>
+                <MenuItem value={1}>Today</MenuItem>
             </Select>
         }>
             <Chart

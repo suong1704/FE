@@ -1,9 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { handleGetAllModule, handlePostNewModule } from "./action";
+import { Lesson } from "../lesson";
 interface Module {
+  moduleId: number,
   title: string;
   description: string;
+  creatorId: string,
+  createdAt: Date,
+  lessons: Lesson[],
+  publishTime: Date,
+  deleted: boolean,
+  published: boolean
 }
 export interface PayloadNewModule {
   moduleData: Module;
@@ -31,3 +39,5 @@ const moduleSlice = createSlice({
 export const { clearDataDetail } = moduleSlice.actions;
 
 export default moduleSlice.reducer;
+
+export type { Module }
