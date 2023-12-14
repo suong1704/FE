@@ -54,3 +54,5 @@ const getHistoryThunk = (learnerId: string, onSucess: Function) => {
     return thunk;
 }
 export { getHistoryThunk }
+
+export type { History }

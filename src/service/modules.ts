@@ -4,7 +4,6 @@ import { isUndefined } from "lodash";
 export interface NewModule {
   title: string;
   description: string;
-  creatorId: string | null;
 }
 const MODULE = `/modules`;
 
@@ -19,7 +18,7 @@ const getModuleById = (id: number) => axios.get(`${MODULE}/${id}`);
 //   );
 // };
 
-const getAllModules = () => axios.get(`${MODULE}`);
+const getAllMyModules = (creatorId: string) => axios.get(`${MODULE}/creatorId=${creatorId}`);
 
 // const searchModule = (data: string) => axios.get(`${SEARCH_MODULE}${data}`);
 
@@ -32,7 +31,7 @@ const publishModule = async (id: number) => {
 };
 
 export {
-  getAllModules,
+  getAllMyModules,
   //   getModulesPublished,
   getModuleById,
   createNewModule,

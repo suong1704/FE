@@ -22,15 +22,18 @@ interface Module {
 }
 
 import { uniqueId } from "lodash";
-const LessonCard = () => {
+import { Lesson } from "@/store/lesson";
+
+const LessonCard = ({lesson}: { lesson: Lesson }) => {
   const router = useRouter();
   const id = 'uniqueId'
+  
   return (
     <Grid item xs={12} md={6} lg={6}>
-      <Box component={Link}  href={`/lesson-detail/${id}`} passHref>
+      <Box component={Link}  href={`/lesson-detail/${lesson.lessonId}`} passHref>
         <BlankCard >
           <CardContent sx={{ p: 3, pt: 2, display:"flex", justifyContent:"space-between" }}>
-            <Typography variant="h6" >Lesson Name</Typography>
+            <Typography variant="h6" >{lesson.title}</Typography>
             <IconGradienter/>
           </CardContent>
         </BlankCard>

@@ -88,9 +88,7 @@ const SalesOverview = () => {
         {
             name: 'Learned lesson',
             data: histories.map(h => {
-                console.log(h.module.title);
                 return h.histories.filter(hh => {
-                    console.log(new Date(hh.updateAt).getDate(), new Date().getDate());
                     return new Date(hh.updateAt).getDate() == new Date().getDate();
                 }).length;
             }),

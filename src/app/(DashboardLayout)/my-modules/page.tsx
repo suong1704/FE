@@ -7,18 +7,19 @@ import { IconAd, IconPlus } from "@tabler/icons-react";
 import ModalNewModule from "@/components/ModalNewModule";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { handleGetAllModule } from "@/store/module/action";
+import { handleAllMyModule } from "@/store/module/action";
 
 const MyModuleMPage = () => {
-  const listMyodule = useAppSelector((state) => state);
-  // console.log("listMyModule", listMyModule)
+  const myModules = useAppSelector(state => state.module.myModules);
   const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
   useEffect(() => {
-    dispatch(handleGetAllModule());
+    dispatch(handleAllMyModule());
   }, []);
+
   return (
     <PageContainer title="My Modules" description="this is Sample page">
       <DashboardCard
@@ -33,9 +34,11 @@ const MyModuleMPage = () => {
         }>
         <Box>
           <Grid container spacing={3}>
-            {[1, 1, 1, 1, 1, 1, 1].map((module, index) => {
-              return <ModuleCard key={index} />;
-            })}
+            {
+              myModules.map((m) => {
+                return <ModuleCard key={m.moduleId} module={m}/>;
+              })
+            }
           </Grid>
           <ModalNewModule open={open} handleClose={handleClose} />
         </Box>
