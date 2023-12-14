@@ -6,6 +6,7 @@ import { handleToast } from "@/store/toast";
 const Toast = () => {
   const settings = useSelector((state: any) => state.Toast.settings);
   const dispatch = useAppDispatch();
+  
   return (
     <Snackbar
       anchorOrigin={{ vertical: "bottom", horizontal: "left" }}

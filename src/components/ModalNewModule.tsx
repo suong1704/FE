@@ -7,6 +7,7 @@ import { IconPlus, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { handlePostNewModule } from "@/store/module/action";
+import { handleAllMyModule } from "@/store/module/action";
 
 interface Props {
   open: boolean;
@@ -16,8 +17,7 @@ interface Props {
 export default function ModalNewModule({ open, handleClose }: Props) {
   const [newModule, setNewModule] = useState<NewModule>({
     title: "",
-    description: "",
-    creatorId: localStorage.getItem("userId"),
+    description: ""
   });
   const dispatch = useAppDispatch();
   const handleChange = (event: any) => {
@@ -25,7 +25,10 @@ export default function ModalNewModule({ open, handleClose }: Props) {
   };
 
   const hanldeCreateModule = () => {
-    dispatch(handlePostNewModule(newModule));
+    dispatch(handlePostNewModule({ newModule, onSuccess: () => {
+      handleClose();
+      dispatch(handleAllMyModule());
+    } }));
   };
 
   const modalStyle = {
@@ -62,6 +65,9 @@ export default function ModalNewModule({ open, handleClose }: Props) {
               onClick={(e) => {
                 handleChange(e);
               }}
+              onChange={(e) => {
+                setNewModule({...newModule, title: e.target.value});
+              }}
             />
             <TextField
               fullWidth
@@ -70,6 +76,9 @@ export default function ModalNewModule({ open, handleClose }: Props) {
               id="fullWidth"
               onClick={(e) => {
                 handleChange(e);
+              }}
+              onChange={(e) => {
+                setNewModule({...newModule, description: e.target.value});
               }}
             />
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
@@ -81,7 +90,7 @@ export default function ModalNewModule({ open, handleClose }: Props) {
                 Create
               </Button>
             </Box>
-            <CustomTextField />
+            {/* <CustomTextField /> */}
           </Box>
         </DashboardCard>
       </Box>

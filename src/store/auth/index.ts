@@ -1,3 +1,4 @@
+import axios from "@/api/axios";
 import {
   LoginCredentials,
   RegisterRequest,
@@ -11,9 +12,8 @@ export const handleLoginAsync = createAsyncThunk(
   async (data: LoginCredentials, { rejectWithValue, dispatch }) => {
     try {
       const response = await login(data);
-      localStorage.setItem("token", response.data?.data.jwt);
-      localStorage.setItem("userId", response.data?.data.userDTO.userId);
-      return response.data;
+      console.log(response.data.data);
+      return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -31,13 +31,27 @@ export const handleRegisterAsync = createAsyncThunk(
     }
   }
 );
+
+interface User {
+  userId: string;
+  email: string;
+  username: string;
+}
+
+interface AuthState {
+  isAuthenticated: boolean;
+  isSuccesRegister: boolean;
+  dataProfile?: User;
+}
+
+const init: AuthState = {
+  isAuthenticated: false,
+  isSuccesRegister: false,
+};
+
 export const auth = createSlice({
   name: "auth",
-  initialState: {
-    isAuthenticated: false,
-    isSuccesRegister: false,
-    dataProfile: {},
-  },
+  initialState: init,
   reducers: {
     handleLogout(state) {
       state.isAuthenticated = false;
@@ -50,9 +64,12 @@ export const auth = createSlice({
     builder
       .addCase(handleLoginAsync.fulfilled, (state, { payload }) => {
         state.isAuthenticated = true;
-        state.dataProfile = payload.data.userDTO;
-        // localStorage.setItem("token", payload.data.jwt);
-        // localStorage.setItem("userId", payload?.userDTO.userId);
+        state.dataProfile = payload.user;
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${payload.jwt}`;
+        localStorage.setItem("token", payload.jwt);
+        localStorage.setItem("userId", payload?.user.userId);
       })
       .addCase(handleRegisterAsync.fulfilled, (state, { payload }) => {
         if (payload !== undefined) {
