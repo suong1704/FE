@@ -56,7 +56,6 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
     }
   };
   const handleLogin = () => {
-    // localStorage.setItem("isLogin", "true");
     dispatch(handleLoginAsync({ username, password }))
       .then((res) => {
         console.log(res.payload.user);
@@ -86,7 +85,8 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             fontWeight={600}
             component="label"
             htmlFor="username"
-            mb="5px">
+            mb="5px"
+          >
             Username
           </Typography>
           <CustomTextField
@@ -101,7 +101,8 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             fontWeight={600}
             component="label"
             htmlFor="password"
-            mb="5px">
+            mb="5px"
+          >
             Password
           </Typography>
           <CustomTextField
@@ -115,7 +116,8 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
           justifyContent="space-between"
           direction="row"
           alignItems="center"
-          my={2}>
+          my={2}
+        >
           <Typography
             component={Link}
             href="/"
@@ -123,7 +125,8 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
             sx={{
               textDecoration: "none",
               color: "primary.main",
-            }}>
+            }}
+          >
             Forgot Password ?
           </Typography>
         </Stack>
@@ -135,7 +138,8 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
           size="large"
           fullWidth
           onClick={handleLogin}
-          type="submit">
+          type="submit"
+        >
           Sign In
         </Button>
       </Box>

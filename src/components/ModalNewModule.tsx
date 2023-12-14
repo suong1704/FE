@@ -46,11 +46,13 @@ export default function ModalNewModule({ open, handleClose }: Props) {
       open={open}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
-      style={modalStyle}>
+      style={modalStyle}
+    >
       <Box sx={paperStyle}>
         <DashboardCard
           title="Create new module"
-          action={<IconX onClick={handleClose} color="gray" width={24} />}>
+          action={<IconX onClick={handleClose} color="gray" width={24} />}
+        >
           <Box m={1}>
             <TextField
               fullWidth
@@ -74,7 +76,8 @@ export default function ModalNewModule({ open, handleClose }: Props) {
               <Button
                 startIcon={<IconPlus color="white" />}
                 variant="contained"
-                onClick={hanldeCreateModule}>
+                onClick={hanldeCreateModule}
+              >
                 Create
               </Button>
             </Box>

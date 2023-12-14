@@ -11,7 +11,8 @@ export const handleLoginAsync = createAsyncThunk(
   async (data: LoginCredentials, { rejectWithValue, dispatch }) => {
     try {
       const response = await login(data);
-      console.log(response);
+      localStorage.setItem("token", response.data?.data.jwt);
+      localStorage.setItem("userId", response.data?.data.userDTO.userId);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.message);
@@ -49,9 +50,9 @@ export const auth = createSlice({
     builder
       .addCase(handleLoginAsync.fulfilled, (state, { payload }) => {
         state.isAuthenticated = true;
-        state.dataProfile = payload.user;
-        localStorage.setItem("token", payload.jwt);
-        localStorage.setItem("userId", payload?.user.userId);
+        state.dataProfile = payload.data.userDTO;
+        // localStorage.setItem("token", payload.data.jwt);
+        // localStorage.setItem("userId", payload?.userDTO.userId);
       })
       .addCase(handleRegisterAsync.fulfilled, (state, { payload }) => {
         if (payload !== undefined) {
