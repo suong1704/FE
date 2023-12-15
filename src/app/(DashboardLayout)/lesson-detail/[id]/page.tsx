@@ -4,7 +4,7 @@ import PageContainer from '@/app/(DashboardLayout)/components/container/PageCont
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import Button from '@mui/material/Button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CreateIcon from '@mui/icons-material/Create';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
@@ -14,6 +14,7 @@ import { deleteLessonThunk, updateLessonThunk } from '@/store/lesson/detailLesso
 import { handleToast } from '@/store/toast';
 import MyDialog from '@/components/MyDialog';
 import { useRouter } from 'next/navigation';
+import NewQuesForm from '../components/NewQuesForm';
 
 const LessonDetail = () => {
   const lesson = useAppSelector(state => state.detailLesson.lesson!);
@@ -21,9 +22,11 @@ const LessonDetail = () => {
   const [lessonMod, setLessonMod] = useState({...lesson});
   const dispatch = useAppDispatch();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openNewQuesForm, setOpenNewQuesForm] = useState(false);
   const router = useRouter();
 
   const saveHandler = () => {
+    console.log("save");
     console.log(lessonMod);
     dispatch(handleToast({
       open: true,
@@ -55,9 +58,15 @@ const LessonDetail = () => {
     }));
   }
 
+  useEffect(() => {
+    if(lessonMod.listeningContent.listQuestion.length != lesson.listeningContent.listQuestion.length){
+      saveHandler();
+    }
+  }, [lessonMod.listeningContent.listQuestion.length])
+
   return (
     lesson &&
-    <PageContainer title="Sample Page" description="this is Sample page">
+    <PageContainer title={lesson.title} description="this is Sample page">
       <Stack direction="row" justifyContent="flex-end" spacing={2} marginBottom={2}>
         <Button variant='contained' color={mode == "preview" ? "warning" : "secondary"} onClick={(e) => {
           setMode((m) => {
@@ -166,6 +175,27 @@ const LessonDetail = () => {
             <Stack paddingLeft={2} direction="row" spacing={1} alignItems="center">
               <Typography variant='h5'>Questions</Typography>
               <QuestionMarkIcon />
+              <Button variant='outlined' onClick={() => {
+                setOpenNewQuesForm(true);
+              }}>Add more</Button>
+              <NewQuesForm open={openNewQuesForm}
+                handleClose={() => { setOpenNewQuesForm(false) }}
+                handleAdd={(newQuest) => {
+                  setLessonMod(prev => {
+                    return {
+                      ...prev,
+                      listeningContent: {
+                        ...prev.listeningContent,
+                        listQuestion: [
+                          ...prev.listeningContent.listQuestion,
+                          newQuest
+                        ]
+                      }
+                    }
+                  });
+                  setOpenNewQuesForm(false);
+                }}
+              />
             </Stack>
             <ListQuest mode={mode} questions={lessonMod.listeningContent.listQuestion} setLessonMod={setLessonMod}/>
           </Stack>

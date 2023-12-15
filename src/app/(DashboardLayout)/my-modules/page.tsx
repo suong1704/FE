@@ -21,9 +21,9 @@ const MyModuleMPage = () => {
   }, []);
 
   return (
-    <PageContainer title="My Modules" description="this is Sample page">
+    <PageContainer title={`My Modules (${myModules.length})`} description="this is Sample page">
       <DashboardCard
-        title="My Modules"
+        title={`My Modules (${myModules.length})`}
         action={
           <Button
             variant="contained"

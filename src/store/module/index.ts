@@ -1,7 +1,9 @@
-import { createSelector, createSlice } from "@reduxjs/toolkit";
+import { ThunkAction, createSelector, createSlice } from "@reduxjs/toolkit";
 
 import { handleAllMyModule, handlePostNewModule } from "./action";
 import { Lesson } from "../lesson";
+import { RootState } from "..";
+import axios from "@/api/axios";
 interface Module {
   moduleId: number,
   title: string;
@@ -29,6 +31,13 @@ const moduleSlice = createSlice({
   initialState,
   reducers: {
     clearDataDetail: (state: any) => {},
+    replaceMyModule: (state, action: { payload: Module }) => {
+      const newMyModules = state.myModules.map((m) => {
+        if(m.moduleId == action.payload.moduleId) return action.payload;
+        return m;
+      });
+      state.myModules = newMyModules;
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(handlePostNewModule.fulfilled, (state, action) => {});
@@ -38,8 +47,20 @@ const moduleSlice = createSlice({
   },
 });
 
-export const { clearDataDetail } = moduleSlice.actions;
+export const { clearDataDetail, replaceMyModule } = moduleSlice.actions;
+
+const updateModuleThunk = (module: Module, onSucess: Function) => {
+  const thunk: ThunkAction<void, RootState, any, any> = async (dispatch, getState) => {
+    const res = await axios.patch(`/modules`, module);
+    dispatch(replaceMyModule(module));
+    onSucess();
+  };
+
+  return thunk;
+}
 
 export default moduleSlice.reducer;
 
 export type { Module }
+
+export { updateModuleThunk }
