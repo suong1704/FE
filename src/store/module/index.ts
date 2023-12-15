@@ -1,7 +1,7 @@
 import { ThunkAction, createSelector, createSlice } from "@reduxjs/toolkit";
 
 import { handleAllMyModule, handlePostNewModule } from "./action";
-import { Lesson } from "../lesson";
+import lesson, { Lesson } from "../lesson";
 import { RootState } from "..";
 import axios from "@/api/axios";
 interface Module {
@@ -21,9 +21,11 @@ export interface PayloadNewModule {
 
 export interface InitialState {
   myModules: Module[];
+  filter: "all" | "published" | "unPulished" | "deleted";
 }
 const initialState: InitialState = {
   myModules: [],
+  filter: "all"
 };
 
 const moduleSlice = createSlice({
@@ -37,6 +39,18 @@ const moduleSlice = createSlice({
         return m;
       });
       state.myModules = newMyModules;
+    },
+    updateFilter: (state, action: { payload: InitialState["filter"] }) => {
+      state.filter = action.payload;
+    },
+    addLessonByModuleId: (state, action: { payload: { moduleId: number, lesson: Lesson } }) => {
+      const newMyModules = state.myModules.map((m) => {
+        if(m.moduleId == action.payload.moduleId){
+          m.lessons.push(action.payload.lesson);
+        }
+        return m;
+      });
+      state.myModules = newMyModules;
     }
   },
   extraReducers: (builder) => {
@@ -47,7 +61,7 @@ const moduleSlice = createSlice({
   },
 });
 
-export const { clearDataDetail, replaceMyModule } = moduleSlice.actions;
+export const { clearDataDetail, replaceMyModule, updateFilter, addLessonByModuleId } = moduleSlice.actions;
 
 const updateModuleThunk = (module: Module, onSucess: Function) => {
   const thunk: ThunkAction<void, RootState, any, any> = async (dispatch, getState) => {
@@ -59,8 +73,53 @@ const updateModuleThunk = (module: Module, onSucess: Function) => {
   return thunk;
 }
 
+const publishModuleThunk = (module: Module, onSucess: (newModule: Module) => void) => {
+  const thunk: ThunkAction<void, RootState, any, any> = async (dispatch, getState) => {
+    const res = await axios.put(`/modules/${module.moduleId}/publish`);
+    dispatch(replaceMyModule(res.data.data));
+    onSucess(res.data.data);
+  };
+
+  return thunk;
+}
+
+function createLessonThunk(moduleId: number, title: string, onSucess: (newModule: Module) => void){
+  const thunk: ThunkAction<void, RootState, any, any> = async (dispatch, getState) => {
+      const newLesson = {
+        moduleId: moduleId,
+        title: title,
+        listeningContent: {
+          audioUrl: "Your audio",
+          listQuestion: [
+            {
+              question: "Quest 1...",
+              answers: ["A. Option A" , "B. Option B", "C. Option C", "D. Option C" ],
+              correctAnswerId: 1,
+              explanation: "The speaker expresses a preference for..."
+            }
+          ]
+        },
+        speakingContent: {
+          audioUrl: "https://example.com/listening_part3_q1.mp3",
+          content: "value3"
+        }
+      }
+
+      const res = await axios.post(`/lessons`, newLesson);
+      dispatch(addLessonByModuleId({
+        moduleId: moduleId,
+        lesson: res.data.data
+      }));
+      onSucess(
+        getState().module.myModules.find(m => m.moduleId == moduleId)!
+      );
+  };
+  
+  return thunk;
+}
+
 export default moduleSlice.reducer;
 
 export type { Module }
 
-export { updateModuleThunk }
+export { updateModuleThunk, publishModuleThunk, createLessonThunk }

@@ -1,16 +1,17 @@
 'use client';
-import { Box, Fab, Grid, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Fab, Grid, Stack, TextField, Typography } from '@mui/material';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
-import Image from "next/image";
-import img4 from "public/images/products/s11.jpg";
-import { IconEdit, IconRowRemove, IconOctagonOff, IconBrandStripe } from '@tabler/icons-react';
+import { IconEdit, IconRowRemove, IconOctagonOff, IconArrowBigDownLine,
+  IconBrandStripe, IconArrowBigUpLine } from '@tabler/icons-react';
 import LessonCard from '@/components/LessonCard';
 import { useSearchParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { useState } from 'react';
-import { updateModuleThunk } from '@/store/module';
-import { handleToast } from '@/store/toast';
+import { createLessonThunk, publishModuleThunk, updateModuleThunk } from '@/store/module';
+import MyDialog from '@/components/MyDialog';
+import { Add } from '@mui/icons-material';
+import { Lesson } from '@/store/lesson';
 
 const ModuleDetail = ({ params }: { params: { id: number } }) => {
   const searchParams = useSearchParams();
@@ -21,20 +22,42 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
   const [mode, setMode] = useState<"modify" | "preview">("preview");
   const [moduleMod, setModuleMod] = useState({...module!});
   const dispatch = useAppDispatch();
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+  const [lsTilte, setLsTitle] = useState("");
+  const [addingLesson, setAddingLesson] = useState(false);
 
   const updateModule = () => {
     console.log("updateModule");
-    dispatch(handleToast({
-      open: true,
-      status: "warning",
-      message: "Saving...",
-    }));
     dispatch(updateModuleThunk(moduleMod, () => {
-      dispatch(handleToast({
-        open: true,
-        status: "success",
-        message: "Saved",
-      }));
+    }));
+  }
+
+  const publishModule = () => {
+    console.log("publishModule");
+    dispatch(publishModuleThunk(moduleMod, (newModule) => {
+      setModuleMod({...newModule});
+    }));
+  }
+
+  const unPublishModule = () => {
+    console.log("publishModule");
+    dispatch(updateModuleThunk({...module!, published: false}, () => {
+      setModuleMod({...module!, published: false});
+    }));
+  }
+
+  const deleteUnPublishModule = () => {
+    console.log("publishModule");
+    dispatch(updateModuleThunk({...module!, deleted: true}, () => {
+      setModuleMod({...module!, deleted: true});
+    }));
+  }
+
+  const addLesson = () => {
+    console.log("addLesson");
+    dispatch(createLessonThunk(module?.moduleId!, lsTilte, (newModule) => {
+      console.log(newModule);
     }));
   }
 
@@ -50,23 +73,68 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
         mode == "preview"
         ?
         <Stack direction={"row"} spacing={1}>
-          <Fab color="secondary" size="medium" sx={{color: '#ffffff'}}
-            onClick={() => {
-              setMode((m) => {
-                if(m == 'modify'){
-                  //saveHandler();
-                  return "preview";
-                }
-                else{
-                  return "modify";
-                }
-              })
-            }}>
-            <IconEdit width={24} />
-          </Fab>
-          <Fab color="error" size="medium">
-            <IconRowRemove width={24}/>
-          </Fab>
+          {
+            !moduleMod.deleted && !moduleMod.published
+            &&
+            <Fab color="secondary" size="medium" sx={{color: '#ffffff'}}
+              onClick={() => {
+                setMode((m) => {
+                  if(m == 'modify'){
+                    //saveHandler();
+                    return "preview";
+                  }
+                  else{
+                    return "modify";
+                  }
+                })
+              }}>
+              <IconEdit width={24} />
+            </Fab>
+          }
+          {
+            !moduleMod.published && !moduleMod.deleted
+            &&
+            <Fab color="info" size="medium"
+              onClick={() => {
+                publishModule();
+              }}>
+              <IconArrowBigUpLine width={24}/>
+            </Fab>
+          }
+          {
+            moduleMod.published && !moduleMod.deleted
+            &&
+            <Fab color="primary" size="medium"
+              onClick={() => {
+                unPublishModule();
+              }}>
+              <IconArrowBigDownLine width={24}/>
+            </Fab>
+          }
+          {
+            !moduleMod.deleted && !moduleMod.published
+            &&
+            <>
+              <Fab color="error" size="medium"
+                onClick={() => {
+                  setOpenDeleteDialog(true);
+                }}>
+                <IconRowRemove width={24}/>
+              </Fab>
+              <MyDialog 
+                title='DELETE'
+                mes='Do you want delete this module?'
+                open={openDeleteDialog}
+                handleClose={() => {
+                  setOpenDeleteDialog(false);
+                }}
+                onAgree={() => {
+                  setOpenDeleteDialog(false);
+                  deleteUnPublishModule();
+                }}
+              />
+            </>
+          }
         </Stack>
         :
         <Stack direction={"row"} spacing={1}>
@@ -126,19 +194,73 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
             }
           </Stack>
           
-          <Typography mt={1} fontWeight={300} variant='h6'>
-            Total lesson: {module.lessons.length}
-          </Typography>
-          <Box m={1}>
-          <Grid container spacing={3} mt={2}>
+          <Stack>
+            <Typography mt={1} fontWeight={300} variant='h6'>
+              Total lesson: {module.lessons.length}
+            </Typography>
             {
-              module.lessons.map((l => {
-                return (
-                  <LessonCard key={l.lessonId} lesson={l}/>
-                );
-              }))
+              moduleMod.published && !moduleMod.deleted
+              &&
+              <Alert severity="success">This module is published</Alert>
             }
-          </Grid>
+            {
+              moduleMod.deleted
+              &&
+              <Alert severity="error">This module is deleted</Alert>
+            }
+            {
+              !moduleMod.published && !moduleMod.deleted
+              &&
+              <Alert severity="warning">This module hasn't published yet</Alert>
+            }
+          </Stack>
+          <Box m={1}>
+            <Grid container spacing={3} mt={2}>
+              {
+                module.lessons.map((l => {
+                  return (
+                    <LessonCard key={l.lessonId} lesson={l}/>
+                  );
+                }))
+              }
+            </Grid>
+            {
+              mode == "modify"
+              &&
+              <Stack direction={"row"} justifyContent={"flex-end"} marginTop={2} marginRight={1}
+                spacing={1}>
+                {
+                  addingLesson
+                  &&
+                  <TextField placeholder='New lesson...'
+                    value={lsTilte}
+                    onChange={(e) => { setLsTitle(e.target.value) }}
+                  />
+                }
+                {
+                  !addingLesson ?
+                  <Button startIcon={<Add />} variant='outlined'
+                  onClick={() => {
+                    setAddingLesson(true);
+                  }}>Add Lesson</Button>
+                  :
+                  <Button startIcon={<Add />} variant='outlined'
+                    onClick={() => {
+                      addLesson();
+                      setAddingLesson(false);
+                      setLsTitle("");
+                    }}>Add</Button>
+                  }
+                {
+                  addingLesson
+                  &&
+                  <Button startIcon={<Add />} variant='outlined' color='error'
+                  onClick={() => {
+                    setAddingLesson(false);
+                  }}>Close</Button>
+                }
+              </Stack>
+            }
           </Box>
         </Box>
       </DashboardCard>
