@@ -17,7 +17,11 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
   const searchParams = useSearchParams();
   const isMyModule = parseInt(searchParams.get("isMyModule")!);
   const myModules = useAppSelector(state => state.module.myModules);
-  const module = isMyModule ? myModules.find(m => m.moduleId == params.id) : undefined;
+  const allModules = useAppSelector(state => state.module.allModules);
+  let module = isMyModule ? myModules.find(m => m.moduleId == params.id) : allModules.find(m => m.moduleId == params.id);
+  if(!module && isMyModule){
+    module = allModules.find(m => m.moduleId == params.id);
+  }
 
   const [mode, setMode] = useState<"modify" | "preview">("preview");
   const [moduleMod, setModuleMod] = useState({...module!});
@@ -70,6 +74,8 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
       style={{ width: "100%", height: "270px", borderRadius: "10px" }}
     /> */}
       <DashboardCard title={module.title}  action={
+        isMyModule ?
+        (
         mode == "preview"
         ?
         <Stack direction={"row"} spacing={1}>
@@ -147,13 +153,15 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
           </Fab>
           <Fab color="error" size="medium" sx={{color: '#ffffff'}}
             onClick={() => {
-              setModuleMod({...module});
+              setModuleMod({...module!});
               setMode("preview");
             }}>
             <IconOctagonOff width={24} />
           </Fab>
         </Stack>
-
+        )
+        :
+        <></>
       } >
         <Box>
           {
@@ -219,7 +227,7 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
               {
                 module.lessons.map((l => {
                   return (
-                    <LessonCard key={l.lessonId} lesson={l}/>
+                    <LessonCard key={l.lessonId} lesson={l} isMyModule={isMyModule}/>
                   );
                 }))
               }

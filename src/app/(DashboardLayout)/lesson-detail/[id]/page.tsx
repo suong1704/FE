@@ -13,7 +13,7 @@ import ListQuest from '../components/ListQuest';
 import { deleteLessonThunk, updateLessonThunk } from '@/store/lesson/detailLessonSlice';
 import { handleToast } from '@/store/toast';
 import MyDialog from '@/components/MyDialog';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import NewQuesForm from '../components/NewQuesForm';
 
 const LessonDetail = () => {
@@ -24,6 +24,9 @@ const LessonDetail = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openNewQuesForm, setOpenNewQuesForm] = useState(false);
   const router = useRouter();
+  
+  const searchParams = useSearchParams();
+  const isMyModule = parseInt(searchParams.get("isMyModule")!);
 
   const saveHandler = () => {
     console.log("save");
@@ -68,6 +71,8 @@ const LessonDetail = () => {
     lesson &&
     <PageContainer title={lesson.title} description="this is Sample page">
       <Stack direction="row" justifyContent="flex-end" spacing={2} marginBottom={2}>
+        {
+        isMyModule ?
         <Button variant='contained' color={mode == "preview" ? "warning" : "secondary"} onClick={(e) => {
           setMode((m) => {
             if(m == 'modify'){
@@ -81,7 +86,12 @@ const LessonDetail = () => {
         }}>
           <Typography>{mode == "preview" ? "Modify" : "Save"}</Typography>
         </Button>
+        :
+        <></>
+        }
         {
+          isMyModule ?
+          (
           mode == "preview"
           &&
           <>
@@ -104,6 +114,9 @@ const LessonDetail = () => {
               }}
             />
           </>
+          )
+          :
+          <></>
         }
         {
           mode == "modify"
@@ -175,9 +188,14 @@ const LessonDetail = () => {
             <Stack paddingLeft={2} direction="row" spacing={1} alignItems="center">
               <Typography variant='h5'>Questions</Typography>
               <QuestionMarkIcon />
-              <Button variant='outlined' onClick={() => {
-                setOpenNewQuesForm(true);
-              }}>Add more</Button>
+              {
+                isMyModule ?
+                <Button variant='outlined' onClick={() => {
+                  setOpenNewQuesForm(true);
+                }}>Add more</Button>
+                :
+                <></>
+              }
               <NewQuesForm open={openNewQuesForm}
                 handleClose={() => { setOpenNewQuesForm(false) }}
                 handleAdd={(newQuest) => {

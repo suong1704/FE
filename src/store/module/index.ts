@@ -9,6 +9,7 @@ interface Module {
   title: string;
   description: string;
   creatorId: string,
+  username: string,
   createdAt: Date,
   lessons: Lesson[],
   publishTime: Date,
@@ -22,10 +23,16 @@ export interface PayloadNewModule {
 export interface InitialState {
   myModules: Module[];
   filter: "all" | "published" | "unPulished" | "deleted";
+  allModules: Module[];
+  size: number,
+  totalPages: number
 }
 const initialState: InitialState = {
   myModules: [],
-  filter: "all"
+  filter: "all",
+  allModules: [],
+  size: 0,
+  totalPages: 0
 };
 
 const moduleSlice = createSlice({
@@ -51,6 +58,11 @@ const moduleSlice = createSlice({
         return m;
       });
       state.myModules = newMyModules;
+    },
+    updateAllModules: (state, action: { payload: { modules: Module[], size: number, totalPages: number } }) => {
+      state.allModules = action.payload.modules;
+      state.size = action.payload.size;
+      state.totalPages = action.payload.totalPages;
     }
   },
   extraReducers: (builder) => {
@@ -61,7 +73,8 @@ const moduleSlice = createSlice({
   },
 });
 
-export const { clearDataDetail, replaceMyModule, updateFilter, addLessonByModuleId } = moduleSlice.actions;
+export const { clearDataDetail, replaceMyModule, updateFilter, addLessonByModuleId,
+  updateAllModules } = moduleSlice.actions;
 
 const updateModuleThunk = (module: Module, onSucess: Function) => {
   const thunk: ThunkAction<void, RootState, any, any> = async (dispatch, getState) => {
@@ -118,8 +131,23 @@ function createLessonThunk(moduleId: number, title: string, onSucess: (newModule
   return thunk;
 }
 
+const getAllModuleThunk = (offset: number, pageSize: number, publishedTimeOrder?: string) => {
+  const thunk: ThunkAction<void, RootState, any, any> = async (dispatch, getState) => {
+    const res = await axios.get(`/modules?offset=${offset}&pageSize=${pageSize}
+      ${publishedTimeOrder ? `&publishedTimeOrder=${publishedTimeOrder}` : ""}`);
+    dispatch(updateAllModules({
+      size: res.data.data.size,
+      modules: res.data.data.data,
+      totalPages: res.data.data.totalPages
+    }));
+  };
+
+  return thunk;
+}
+
 export default moduleSlice.reducer;
 
 export type { Module }
 
-export { updateModuleThunk, publishModuleThunk, createLessonThunk }
+export { updateModuleThunk, publishModuleThunk, createLessonThunk,
+  getAllModuleThunk }

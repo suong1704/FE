@@ -26,14 +26,14 @@ import { useDispatch } from "react-redux";
 import { updateDetailLesson } from "@/store/lesson/detailLessonSlice";
 import { Lesson } from "@/store/lesson";
 
-const LessonCard = ({lesson}: { lesson: Lesson }) => {
+const LessonCard = ({lesson, isMyModule}: { lesson: Lesson, isMyModule: number }) => {
   const router = useRouter();
   const id = 'uniqueId'
   const dispatch = useDispatch();
   
   return (
     <Grid item xs={12} md={6} lg={6}>
-      <Box component={Link}  href={`/lesson-detail/${lesson.lessonId}`} passHref
+      <Box component={Link}  href={`/lesson-detail/${lesson.lessonId}?isMyModule=${isMyModule}`} passHref
         onClick={(e) => { dispatch(updateDetailLesson(lesson)) }}>
         <BlankCard >
           <CardContent sx={{ p: 3, pt: 2, display:"flex", justifyContent:"space-between" }}>

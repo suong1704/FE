@@ -40,9 +40,9 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "My Learning",
+    title: "All Modules",
     icon: IconAperture,
-    href: "/my-learning",
+    href: "/all-module",
   },
   // {
   //   navlabel: true,
