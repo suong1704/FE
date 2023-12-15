@@ -16,7 +16,7 @@ export default function RootLayout({
   useEffect(() => {
     // Check if running on the client side
     if (typeof window !== "undefined") {
-      const isLoginString: any = localStorage.getItem("token") as String;
+      const isLoginString: any = localStorage.getItem("tokenxyz") as String;
       const isLogin: boolean = isLoginString ? isLoginString : false;
 
       if (!isLogin) {

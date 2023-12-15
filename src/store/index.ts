@@ -4,7 +4,7 @@ import module from "./module/index";
 import auth from "./auth";
 import Toast from './toast/index';
 import { history } from "./history/historySlice"
-import { detailLessonReducer as detailLesson } from "./module/detailLessonSlice";
+import { detailLessonReducer as detailLesson } from "./lesson/detailLessonSlice";
 
 
 export const store = configureStore({

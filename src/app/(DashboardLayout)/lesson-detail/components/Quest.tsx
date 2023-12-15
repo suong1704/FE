@@ -36,53 +36,115 @@ function Quest({ quest, mode, setLessonMod }: { quest: Question, mode: "modify" 
             }
             </Stack>
             {
-            quest.answers.map((an, index) => {
-                return (
-                <Stack key={an} direction={"row"} spacing={2} padding={1}>
-                    <Typography variant='h6' paddingLeft={2}>{index}.</Typography>
-                    <Typography variant='h6'>{an}</Typography>
-                    {
+                quest.answers.map((an, index) => {
+                    return (
+                    <Stack key={index} direction={"row"} spacing={2} padding={1}>
+                        <Typography variant='h6' paddingLeft={2}>{index}.</Typography>
+                        <Typography variant='h6'>{an}</Typography>
+                        {
+                            mode == "modify"
+                            &&
+                            <TextField variant='standard' size="small" placeholder='New content...'
+                                onChange={(e) => {
+                                    setLessonMod(prev => {
+                                        const newQuestions = prev.listeningContent.listQuestion.map((q) => {
+                                            if(q == quest) {
+                                                return {
+                                                    ...q,
+                                                    answers: q.answers.map((ann, idx) => {
+                                                        if(idx == index) return e.target.value;
+                                                        return ann;
+                                                    })
+                                                };
+                                            }
+                                            else return q;
+                                        });
+                
+                                        return {
+                                            ...prev,
+                                            listeningContent:{
+                                                ...prev.listeningContent,
+                                                listQuestion: newQuestions
+                                            }
+                                        };
+                                    })
+                                }}/>
+                        }
+                    </Stack>
+                    );
+                })
+            }
+            <Stack direction={"row"} spacing={2} alignItems={"center"}  marginTop={2}>
+                <Typography variant='h6' paddingLeft={2} color={"green"}>Answer:</Typography>
+                {
+                    mode == "preview"
+                    &&
+                    <Typography variant='h6'>{quest.answers[quest.correctAnswerId - 1]}</Typography>
+                }
+                {
                     mode == "modify"
                     &&
-                    <TextField variant='standard' size="small" placeholder='New content...'/>
+                    <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group"
+                        onChange={(e) => {
+                            setLessonMod(prev => {
+                                const newQuestions = prev.listeningContent.listQuestion.map((q) => {
+                                    if(q == quest) {
+                                        return {
+                                            ...q,
+                                            correctAnswerId: parseInt(e.target.value)
+                                        };
+                                    }
+                                    else return q;
+                                });
+        
+                                return {
+                                    ...prev,
+                                    listeningContent:{
+                                        ...prev.listeningContent,
+                                        listQuestion: newQuestions
+                                    }
+                                };
+                            })
+                        }}>
+                    {
+                        quest.answers.map((an, index) => {
+                            return (
+                                <FormControlLabel key={index} value={index + 1} control={<Radio />} label={an}
+                                    checked={quest.correctAnswerId == index + 1}
+                                />
+                            );
+                        })
                     }
-                </Stack>
-                );
-            })
-            }
-            <Stack direction={"row"} spacing={2} alignItems={"center"}>
-            <Typography variant='h6' paddingLeft={2} color={"green"}>Answer:</Typography>
-            {
-                mode == "preview"
-                &&
-                <Typography variant='h6'>{quest.answers[quest.correctAnswerId]}</Typography>
-            }
-            {
-                mode == "modify"
-                &&
-                <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                >
-                {
-                    quest.answers.map((an, index) => {
-                    return (
-                        <FormControlLabel key={index} value={index} control={<Radio />} label={an}
-                        checked={quest.correctAnswerId == index}/>
-                    );
-                    })
+                    </RadioGroup>
                 }
-                </RadioGroup>
-            }
             </Stack>
-            <Stack direction={"row"} spacing={2}>
-            <Typography variant='h6'>{quest.explanation}</Typography>
-            {
-                mode == "modify"
-                &&
-                <TextField variant='standard' size="small" placeholder='New content...'/>
-            }
+            <Stack direction={"row"} spacing={2} marginTop={2}>
+                <Typography variant='h6' paddingLeft={2} color={"orange"}>Explanation:</Typography>
+                <Typography variant='h6'>{quest.explanation}</Typography>
+                {
+                    mode == "modify"
+                    &&
+                    <TextField variant='standard' size="small" placeholder='New content...'
+                        onChange={(e) => {
+                            setLessonMod(prev => {
+                                const newQuestions = prev.listeningContent.listQuestion.map((q) => {
+                                    if(q == quest) return {
+                                        ...q, explanation: e.target.value
+                                    };
+                                    else return q;
+                                });
+        
+                                return {
+                                    ...prev,
+                                    listeningContent:{
+                                        ...prev.listeningContent,
+                                        listQuestion: newQuestions
+                                    }
+                                };
+                            })
+                        }}
+                    />
+                }
             </Stack>
         </Stack>
     );

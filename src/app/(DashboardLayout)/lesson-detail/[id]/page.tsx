@@ -2,7 +2,7 @@
 import { FormControlLabel, Radio, RadioGroup, Stack, TextField, Typography } from '@mui/material';
 import PageContainer from '@/app/(DashboardLayout)/components/container/PageContainer';
 import DashboardCard from '@/app/(DashboardLayout)/components/shared/DashboardCard';
-import { useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
 import CreateIcon from '@mui/icons-material/Create';
@@ -10,15 +10,50 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import ListQuest from '../components/ListQuest';
+import { deleteLessonThunk, updateLessonThunk } from '@/store/lesson/detailLessonSlice';
+import { handleToast } from '@/store/toast';
+import MyDialog from '@/components/MyDialog';
+import { useRouter } from 'next/navigation';
 
 const LessonDetail = () => {
   const lesson = useAppSelector(state => state.detailLesson.lesson!);
   const [mode, setMode] = useState<"modify" | "preview">("preview");
   const [lessonMod, setLessonMod] = useState({...lesson});
+  const dispatch = useAppDispatch();
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const router = useRouter();
 
   const saveHandler = () => {
     console.log(lessonMod);
+    dispatch(handleToast({
+      open: true,
+      status: "warning",
+      message: "Saving...",
+    }));
+    dispatch(updateLessonThunk(lessonMod, () => {
+      dispatch(handleToast({
+        open: true,
+        status: "success",
+        message: "Saved",
+      }));
+    }));
   };
+
+  const deleteHandler = () => {
+    dispatch(handleToast({
+      open: true,
+      status: "warning",
+      message: "deleting...",
+    }));
+    dispatch(deleteLessonThunk(lessonMod, () => {
+      dispatch(handleToast({
+        open: true,
+        status: "success",
+        message: "Deleted",
+      }));
+      router.back();
+    }));
+  }
 
   return (
     lesson &&
@@ -40,13 +75,33 @@ const LessonDetail = () => {
         {
           mode == "preview"
           &&
-          <Button variant='outlined' color='error'>DELETE</Button>
+          <>
+            <Button variant='outlined' color='error'
+              onClick={() => {
+                setOpenDeleteDialog(true);
+            }}>
+              DELETE
+            </Button>
+            <MyDialog 
+              title='DELETE'
+              mes='Do you want delete this lesson?'
+              open={openDeleteDialog}
+              handleClose={() => {
+                setOpenDeleteDialog(false);
+              }}
+              onAgree={() => {
+                setOpenDeleteDialog(false);
+                deleteHandler();
+              }}
+            />
+          </>
         }
         {
           mode == "modify"
           &&
           <Button variant='outlined' color='error' onClick={() => {
             setMode("preview");
+            setLessonMod({...lesson});
           }}>CANCEL</Button>
         }
       </Stack>

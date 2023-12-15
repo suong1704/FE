@@ -23,7 +23,7 @@ interface Module {
 
 import { uniqueId } from "lodash";
 import { useDispatch } from "react-redux";
-import { updateDetailLesson } from "@/store/module/detailLessonSlice";
+import { updateDetailLesson } from "@/store/lesson/detailLessonSlice";
 import { Lesson } from "@/store/lesson";
 
 const LessonCard = ({lesson}: { lesson: Lesson }) => {
