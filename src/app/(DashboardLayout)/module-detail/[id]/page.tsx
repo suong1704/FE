@@ -227,7 +227,8 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
               {
                 module.lessons.map((l => {
                   return (
-                    <LessonCard key={l.lessonId} lesson={l} isMyModule={isMyModule}/>
+                    <LessonCard key={l.lessonId} lesson={l} isMyModule={isMyModule}
+                      moudule={module!}/>
                   );
                 }))
               }

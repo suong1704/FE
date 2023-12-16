@@ -34,16 +34,17 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: "My Modules",
-    icon: IconLayoutDashboard,
-    href: "/my-modules",
-  },
-  {
-    id: uniqueId(),
     title: "All Modules",
     icon: IconAperture,
     href: "/all-module",
   },
+  {
+    id: uniqueId(),
+    title: "My Modules",
+    icon: IconLayoutDashboard,
+    href: "/my-modules",
+  },
+  
   // {
   //   navlabel: true,
   //   subheader: "Auth",

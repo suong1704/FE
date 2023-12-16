@@ -6,6 +6,7 @@ import Toast from './toast/index';
 import { history } from "./history/historySlice"
 import { detailLessonReducer as detailLesson } from "./lesson/detailLessonSlice";
 import storageFireBase from "./firebase/storageFireBaseSlice";
+import { learnReducer as learn } from "./learn/learnSlice";
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ export const store = configureStore({
     module,
     history,
     detailLesson,
-    storageFireBase
+    storageFireBase,
+    learn
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
