@@ -5,7 +5,7 @@ import auth from "./auth";
 import Toast from './toast/index';
 import { history } from "./history/historySlice"
 import { detailLessonReducer as detailLesson } from "./lesson/detailLessonSlice";
-
+import storageFireBase from "./firebase/storageFireBaseSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,8 +14,13 @@ export const store = configureStore({
     lesson,
     module,
     history,
-    detailLesson
+    detailLesson,
+    storageFireBase
   },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false
+  })
 });
 
 export type RootState = ReturnType<typeof store.getState>;

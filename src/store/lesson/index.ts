@@ -11,7 +11,7 @@ interface Lesson {
   lessonId: number,
   title: string,
   listeningContent: ListeningContent,
-  speakingContent: string,
+  speakingContent: SpeakingContent,
   createdAt: Date,
   moduleId: number,
   deleted: boolean
@@ -25,6 +25,10 @@ interface Question{
   answers: string[],
   correctAnswerId: number,
   explanation: string
+}
+interface SpeakingContent{
+  audioUrl: string,
+  content: string
 }
 export interface PayloadLesson {
   LessonData: Lesson;
