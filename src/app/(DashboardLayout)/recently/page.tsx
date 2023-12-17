@@ -9,9 +9,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useAppSelector } from '@/store/hooks';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { Lesson, Question } from '@/store/lesson';
-import { History } from '@/store/history/historySlice';
+import { History, getHistoryThunk } from '@/store/history/historySlice';
+import { useEffect } from 'react';
 
 function createData(
   name: string,
@@ -32,6 +33,16 @@ const SamplePage = () => {
   listHistory.sort((a, b) => {
     return new Date(b.updateAt).getTime() - new Date(a.updateAt).getTime();
   });
+
+  const auth = useAppSelector(state => state.auth.dataProfile);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if(!auth) return;
+    dispatch(getHistoryThunk(
+      auth.userId, () => {
+    }));
+  }, [])
 
   const calcAmountCorrectAnswer = (listeningAnswer: number[], listQuestion: Question[]) => {
     let result = 0;
@@ -116,4 +127,3 @@ const SamplePage = () => {
 };
 
 export default SamplePage;
-
