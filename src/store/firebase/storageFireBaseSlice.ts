@@ -50,4 +50,31 @@ onSuccess: (url: string) => void) => {
     return thunk;
 }
 
-export { uploadAudioThunk }
+const uploadAvatarThunk = (oldUrl: string, userId: string, file: File,
+onSuccess: (url: string) => void) => {
+    const thunk: ThunkAction<void, RootState, any, any> = (dispatch, getState) => {
+        const fileName = `${userId}-${file.name}`;
+        const storageFireBase = getState().storageFireBase;
+        const storageRef = ref(storageFireBase, `avatar/${fileName}`);
+
+        const deleteRef = ref(storageFireBase, `avatar/${oldUrl}`);
+        deleteObject(deleteRef).then(() => {
+            console.log("delete: " + oldUrl);
+        }).catch((error) => {
+            console.log(error);
+        });
+        
+        uploadBytes(storageRef, file)
+        .then(res => {
+            console.log("success upload file to fire base");
+            onSuccess(fileName);
+        })
+        .catch((e) => {
+            console.log(e);
+        });
+    }
+
+    return thunk;
+}
+
+export { uploadAudioThunk, uploadAvatarThunk }

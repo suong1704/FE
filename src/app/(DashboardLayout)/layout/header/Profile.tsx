@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Avatar,
@@ -12,6 +12,9 @@ import {
 } from "@mui/material";
 
 import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
+import { loadImagePromise } from "@/utils/firebaseDownloadUtil";
+import { useAppSelector } from "@/store/hooks";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -21,6 +24,29 @@ const Profile = () => {
   const handleClose2 = () => {
     setAnchorEl2(null);
   };
+
+  const router = useRouter();
+
+  const user = useAppSelector(state => state.user.user);
+  const storageFireBase = useAppSelector(state => state.storageFireBase);
+  const [avSrc, setAvSrc] = useState("");
+
+  useEffect(() => {
+    if(!user) return;
+
+    loadImagePromise(storageFireBase, "avatar/" + user.avatarUrl)
+    .then((res) => {
+        setAvSrc(res.src);
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+
+    return () => {
+      console.log('unmount');
+    }
+
+}, [user?.avatarUrl])
 
   return (
     <Box>
@@ -38,7 +64,7 @@ const Profile = () => {
         onClick={handleClick2}
       >
         <Avatar
-          src="/images/profile/user-1.jpg"
+          src={avSrc ? avSrc : "/images/profile/user-1.jpg"}
           alt="image"
           sx={{
             width: 35,
@@ -63,11 +89,15 @@ const Profile = () => {
           },
         }}
       >
-        <MenuItem>
+        <MenuItem onClick={() => {
+          router.push("/user");
+        }}>
           <ListItemIcon>
             <IconUser width={20} />
           </ListItemIcon>
-          <ListItemText>My Profile</ListItemText>
+          <ListItemText>
+            My Profile
+          </ListItemText>
         </MenuItem>
         <MenuItem>
           <ListItemIcon>

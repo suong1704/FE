@@ -6,12 +6,14 @@ import {
   register,
 } from "@/service/AuthService";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { updateUser } from "../user/userSlice";
 
 export const handleLoginAsync = createAsyncThunk(
   "auth/login",
   async (data: LoginCredentials, { rejectWithValue, dispatch }) => {
     try {
       const response = await login(data);
+      dispatch(updateUser(response.data.data.user));
       console.log(response.data.data);
       return response.data.data;
     } catch (error: any) {
@@ -32,10 +34,13 @@ export const handleRegisterAsync = createAsyncThunk(
   }
 );
 
-interface User {
+export interface User {
   userId: string;
   email: string;
   username: string;
+  fullname: string,
+  phone: string,
+  avatarUrl: string
 }
 
 interface AuthState {
