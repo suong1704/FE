@@ -138,7 +138,7 @@ const LessonDetail = () => {
   }
 
   useEffect(() => {
-    if(lessonMod.listeningContent.listQuestion.length != lesson.listeningContent.listQuestion.length){
+    if(lessonMod?.listeningContent?.listQuestion.length != lesson?.listeningContent?.listQuestion.length){
       saveHandler();
     }
     if(lessonMod.listeningContent.audioUrl != lesson.listeningContent.audioUrl){

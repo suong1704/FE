@@ -59,7 +59,7 @@ const MyModuleMPage = () => {
 
           <Grid container spacing={3}>
             {
-              myModules.map((m) => {
+              myModules.map((m: any) => {
                 if(filter == "all"){
                   return <ModuleCard key={m.moduleId} module={m}/>;
                 }

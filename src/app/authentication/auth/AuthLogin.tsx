@@ -63,7 +63,7 @@ const AuthLogin = ({ title, subtitle, subtext }: loginType) => {
         console.log(res.payload.user);
         // router.push("/");
         if (res.payload.user) {
-          router.push("/");
+          router.push("/all-module");
         }
         else{
           dispatch(handleToast({
