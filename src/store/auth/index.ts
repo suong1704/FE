@@ -1,7 +1,9 @@
 import axios from "@/api/axios";
 import {
+  ChangePasswordRequest,
   LoginCredentials,
   RegisterRequest,
+  changePass,
   login,
   register,
 } from "@/service/AuthService";
@@ -27,8 +29,25 @@ export const handleRegisterAsync = createAsyncThunk(
   async (data: RegisterRequest, { rejectWithValue, dispatch }) => {
     try {
       const response = await register(data);
+      data.onSuccess?.();
       return response.data;
     } catch (error: any) {
+      data.onError?.(error.response.data.data);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const handleChangePassAsync = createAsyncThunk(
+  "auth/changePassword",
+  async (data: ChangePasswordRequest, { rejectWithValue, dispatch }) => {
+    console.log(data);
+    try {
+      const response = await changePass(data);
+      data.onSuccess?.();
+      return response.data;
+    } catch (error: any) {
+      data.onError?.(error.response.data.data);
       return rejectWithValue(error.message);
     }
   }

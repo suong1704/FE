@@ -11,7 +11,7 @@ import {
   ListItemText,
 } from "@mui/material";
 
-import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
+import { IconListCheck, IconMail, IconUser, IconPassword } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { loadImagePromise } from "@/utils/firebaseDownloadUtil";
 import { useAppSelector } from "@/store/hooks";
@@ -97,6 +97,16 @@ const Profile = () => {
           </ListItemIcon>
           <ListItemText>
             My Profile
+          </ListItemText>
+        </MenuItem>
+        <MenuItem onClick={() => {
+          router.push("/authentication/changePassword");
+        }}>
+          <ListItemIcon>
+            <IconPassword width={20} />
+          </ListItemIcon>
+          <ListItemText>
+            Change Password
           </ListItemText>
         </MenuItem>
         <Box mt={1} py={1} px={2}>
