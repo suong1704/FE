@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import {
   CardContent,
@@ -23,28 +22,51 @@ import { Module } from "@/store/module";
 import { useAppDispatch } from "@/store/hooks";
 import { updateLearnLesson } from "@/store/learn/learnSlice";
 
-const LessonCard = ({lesson, isMyModule, moudule}: { lesson: Lesson, isMyModule: number, moudule: Module}) => {
+const LessonCard = ({
+  lesson,
+  isMyModule,
+  moudule,
+}: {
+  lesson: Lesson;
+  isMyModule: number;
+  moudule: Module;
+}) => {
   const router = useRouter();
-  const id = 'uniqueId'
+  const id = "uniqueId";
   const dispatch = useAppDispatch();
-  
+
   return (
     <Grid item xs={12} md={6} lg={6}>
-      <Box component={Link}  href={`/lesson-detail/${lesson.lessonId}?isMyModule=${isMyModule}`} passHref
-        onClick={(e) => { dispatch(updateDetailLesson(lesson)) }}>
-        <BlankCard >
-          <CardContent sx={{ p: 3, pt: 2, display:"flex", justifyContent:"space-between", alignItems: "center" }}>
-            <Typography variant="h6" >{lesson.title}</Typography>
-            {
-              moudule.published && !moudule.deleted &&
-              <Button variant="outlined" onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                router.push("/learn");
-                dispatch(updateLearnLesson(lesson));
-              }}>Learn</Button>
-            }
-            <IconGradienter/>
+      <Box
+        sx={{ textDecoration: "none" }}
+        component={Link}
+        href={`/lesson-detail/${lesson.lessonId}?isMyModule=${isMyModule}`}
+        passHref
+        onClick={(e) => {
+          dispatch(updateDetailLesson(lesson));
+        }}>
+        <BlankCard>
+          <CardContent
+            sx={{
+              p: 3,
+              pt: 2,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}>
+            <Typography variant="h6">{lesson.title}</Typography>
+            {moudule.published && !moudule.deleted && (
+              <Button
+                variant="outlined"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  router.push("/learn");
+                  dispatch(updateLearnLesson(lesson));
+                }}>
+                Learn
+              </Button>
+            )}
           </CardContent>
         </BlankCard>
       </Box>

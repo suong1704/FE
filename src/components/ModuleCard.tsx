@@ -26,7 +26,8 @@ const ModuleCard = ({ module }: { module: Module }) => {
             router.push(`module-detail/${module.moduleId}?isMyModule=1`);
           }}>
           <BlankCard>
-            <CardContent sx={{ p: 3, pt: 2, height: "120px" }}>
+            <CardContent
+              sx={{ p: 3, pt: 2, height: "120px", cursor: "pointer" }}>
               <Typography variant="h6">{module.title}</Typography>
               <Stack
                 direction="row"

@@ -24,7 +24,7 @@ const AuthRegister = ({ title, subtitle, subtext }: registerType) => (
         <Box>
             <Stack mb={3}>
                 <Typography variant="subtitle1"
-                    fontWeight={600} component="label" htmlFor='name' mb="5px">Name</Typography>
+                    fontWeight={600} component="label" htmlFor='name' mb="5px">Username</Typography>
                 <CustomTextField id="name" variant="outlined" fullWidth />
 
                 <Typography variant="subtitle1"
