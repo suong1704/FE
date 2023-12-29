@@ -10,12 +10,16 @@ import { User } from "@/store/auth";
 import { uploadAvatarThunk } from "@/store/firebase/storageFireBaseSlice";
 import { loadImagePromise } from "@/utils/firebaseDownloadUtil";
 import { updateUserThunk } from "@/store/user/userSlice";
+import { getHistoryThunk, getRecentModule } from "@/store/history/historySlice";
 
 
 export default function UserPage(){
     const user = useAppSelector(state => state.user.user);
     const [userMod, setUserMod] = useState(user);
     const [mode, setMode] = useState<"view" | "modify">("view");
+    const allModules = useAppSelector(state => state.module.allModules);
+    const histories = useAppSelector(state => state.history.histories);
+    const moduleVisitHitories = useAppSelector(state => state.history.moduleVisitHitories);
 
     const dispatch = useAppDispatch();
     const fileInputRef = useRef<any>();
@@ -112,6 +116,25 @@ export default function UserPage(){
             }
         ));
     }
+
+    const calcLessonTotal = () => {
+        let result = 0;
+        histories.forEach(h => {
+            h.histories.forEach(hh => {
+                result++;
+            })
+        })
+        return result;
+    }
+
+    const auth = useAppSelector(state => state.auth.dataProfile);
+    useEffect(() => {
+        if(!auth) return;
+        dispatch(getHistoryThunk(
+          auth.userId, () => {
+        }));
+        dispatch(getRecentModule());
+      }, [])
 
     return (
         user && userMod &&
@@ -274,20 +297,34 @@ export default function UserPage(){
                                 }
                             </Stack>
                         </Stack>
-                        {/* <Stack direction={"row"} spacing={5} paddingTop={3}>
+                        <Stack direction={"row"} spacing={5} paddingTop={3}>
                             <Stack direction={"column"} spacing={1}>
-                                <Typography variant="h6">15K</Typography>
+                                <Typography variant="h6">{
+                                    allModules.map((m) => m.creatorId == user.userId).length
+                                }</Typography>
                                 <Typography variant="h6" fontSize={15}>Created Module</Typography>
                             </Stack>
                             <Stack direction={"column"} spacing={1}>
-                                <Typography variant="h6">85</Typography>
+                                <Typography variant="h6">{
+                                    histories.length
+                                }</Typography>
                                 <Typography variant="h6" fontSize={15}>Module Learn</Typography>
                             </Stack>
                             <Stack direction={"column"} spacing={1}>
-                                <Typography variant="h6">85</Typography>
+                                <Typography variant="h6">{
+                                    calcLessonTotal()
+                                }</Typography>
                                 <Typography variant="h6" fontSize={15}>Lesson Learn</Typography>
                             </Stack>
-                        </Stack> */}
+                        </Stack>
+                        <Stack direction={"row"} spacing={5} paddingTop={3}>
+                            <Stack direction={"column"} spacing={1}>
+                                <Typography variant="h6">{
+                                    moduleVisitHitories.length
+                                }</Typography>
+                                <Typography variant="h6" fontSize={15}>Visited Module</Typography>
+                            </Stack>
+                        </Stack>
                     </Stack>
                 </Stack>
             </DashboardCard>

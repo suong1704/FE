@@ -22,7 +22,7 @@ import {
 import LessonCard from "@/components/LessonCard";
 import { useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createLessonThunk,
   publishModuleThunk,
@@ -31,6 +31,7 @@ import {
 import MyDialog from "@/components/MyDialog";
 import { Add } from "@mui/icons-material";
 import { Lesson } from "@/store/lesson";
+import { saveRecentModule } from "@/store/history/historySlice";
 
 const ModuleDetail = ({ params }: { params: { id: number } }) => {
   const searchParams = useSearchParams();
@@ -92,6 +93,10 @@ const ModuleDetail = ({ params }: { params: { id: number } }) => {
       })
     );
   };
+
+  useEffect(() => {
+    dispatch(saveRecentModule(params.id));
+  }, []);
 
   return (
     modules && (
