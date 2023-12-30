@@ -52,7 +52,7 @@ const submitThunk = (lesson: Lesson, listeningAnswer: number[], speakingFile?: F
             const form = new FormData();
             form.set("original_script", lesson.speakingContent.content);
             form.set("audio_file", speakingFile);
-            const res = await baseAxios.post("http://127.0.0.1:8001/pronunciation_score", form);
+            const res = await baseAxios.post("https://mycapstoneprojectai.onrender.com/open-ai/pronunciation_score", form);
             aiResult = res.data;
             console.log(aiResult);
         }
