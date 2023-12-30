@@ -59,7 +59,13 @@ export interface User {
   username: string;
   fullname: string,
   phone: string,
-  avatarUrl: string
+  avatarUrl: string,
+  authorities: Role[]
+}
+
+export interface Role{
+  roleId: number,
+  authority: "Admin" | "Learner" | "Moderator"
 }
 
 interface AuthState {

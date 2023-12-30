@@ -1,9 +1,11 @@
+"use client"
 import React from "react";
 import { usePathname } from "next/navigation";
 import { Box, List } from "@mui/material";
 import NavGroup from "../sidebar/NavGroup/NavGroup";
 import NavItem from "./NavItem";
 import { uniqueId } from "lodash";
+import { useAppSelector } from "@/store/hooks";
 
 const Menuitems = [
   {
@@ -31,7 +33,10 @@ const HeaderItems = () => {
   const pathname = usePathname();
   const pathDirect = pathname;
 
+  const user = useAppSelector(state => state.user.user);
+
   return (
+    user &&
     <Box sx={{ px: "25%" }}>
       <List
         sx={{
@@ -47,9 +52,18 @@ const HeaderItems = () => {
           if (item.subheader) {
             return <NavGroup item={item} key={item.subheader} />;
           } else {
-            return (
-              <NavItem item={item} key={item.id} pathDirect={pathDirect} />
-            );
+            if(
+              item.title === "My Modules"
+              &&
+              user.authorities.find(a => a.authority === "Learner")
+            ){
+              return null;
+            }
+            else{
+              return (
+                <NavItem item={item} key={item.id} pathDirect={pathDirect} />
+              );
+            }
           }
         })}
       </List>

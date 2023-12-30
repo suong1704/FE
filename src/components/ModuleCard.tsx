@@ -1,4 +1,5 @@
 import BlankCard from "@/app/(DashboardLayout)/components/shared/BlankCard";
+import { useAppSelector } from "@/store/hooks";
 import { Module } from "@/store/module";
 import {
   Avatar,
@@ -17,13 +18,15 @@ import img1 from "public/images/products/s4.jpg";
 
 const ModuleCard = ({ module }: { module: Module }) => {
   const router = useRouter();
+  const user = useAppSelector(state => state.user.user);
 
   return (
+    user &&
     <Grid item xs={12} md={4} lg={3}>
       <Tooltip title={"View Detail  "}>
         <Box
           onClick={() => {
-            router.push(`module-detail/${module.moduleId}?isMyModule=1`);
+            router.push(`module-detail/${module.moduleId}?isMyModule=${user.userId === module.creatorId ? "1" : "0"}`);
           }}>
           <BlankCard>
             <CardContent

@@ -8,6 +8,7 @@ import { detailLessonReducer as detailLesson } from "./lesson/detailLessonSlice"
 import storageFireBase from "./firebase/storageFireBaseSlice";
 import { learnReducer as learn } from "./learn/learnSlice";
 import { userReducer as user } from "./user/userSlice";
+import { moderatorRequestReducer as moderatorRequest } from "./moderatorRequest/moderatorRequestSlice";
 
 export const store = configureStore({
   reducer: {
@@ -19,7 +20,8 @@ export const store = configureStore({
     detailLesson,
     storageFireBase,
     learn,
-    user
+    user,
+    moderatorRequest
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Avatar,
@@ -9,12 +9,17 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
+  CircularProgress,
+  Stack,
 } from "@mui/material";
 
 import { IconListCheck, IconMail, IconUser, IconPassword } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 import { loadImagePromise } from "@/utils/firebaseDownloadUtil";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import Diversity1Icon from '@mui/icons-material/Diversity1';
+import CloseIcon from '@mui/icons-material/Close';
+import { cancelModeratorRequestThunk, createModeratorRequestThunk, getModeratorRequestThunk } from "@/store/moderatorRequest/moderatorRequestSlice";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -30,6 +35,9 @@ const Profile = () => {
   const user = useAppSelector(state => state.user.user);
   const storageFireBase = useAppSelector(state => state.storageFireBase);
   const [avSrc, setAvSrc] = useState("");
+
+  const requesting = useAppSelector(state => state.moderatorRequest.requesting);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if(!user) return;
@@ -48,7 +56,14 @@ const Profile = () => {
 
 }, [user?.avatarUrl])
 
+  useEffect(() => {
+    if(user){
+      dispatch(getModeratorRequestThunk());
+    }
+  }, [user])
+
   return (
+    user &&
     <Box>
       <IconButton
         size="large"
@@ -99,6 +114,7 @@ const Profile = () => {
             My Profile
           </ListItemText>
         </MenuItem>
+
         <MenuItem onClick={() => {
           router.push("/authentication/changePassword");
         }}>
@@ -109,6 +125,38 @@ const Profile = () => {
             Change Password
           </ListItemText>
         </MenuItem>
+
+        {
+          user.authorities.find(a => a.authority === "Learner") &&
+          (
+            !requesting ?
+            <MenuItem onClick={() => {
+              dispatch(createModeratorRequestThunk());
+            }}>
+              <ListItemIcon>
+                <Diversity1Icon width={20} />
+              </ListItemIcon>
+              <ListItemText>
+                Become Moderator
+              </ListItemText>
+            </MenuItem>
+            :
+            <MenuItem onClick={() => {
+              dispatch(cancelModeratorRequestThunk());
+            }}>
+              <ListItemIcon>
+                <Diversity1Icon width={20} />
+              </ListItemIcon>
+              <Stack direction={"row"} alignItems={"center"} spacing={1}>
+                <ListItemText>
+                  Requesting...
+                </ListItemText>
+                <CircularProgress color="secondary" size="1rem"/>
+              </Stack>
+            </MenuItem>
+          )
+        }
+        
         <Box mt={1} py={1} px={2}>
           <Button
             href="/authentication/login"
