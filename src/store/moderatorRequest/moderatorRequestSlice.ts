@@ -3,7 +3,7 @@ import { User } from "../auth";
 import { RootState } from "..";
 import axios from "@/api/axios";
 
-interface ModeratorRequest{
+export interface ModeratorRequest{
     moderatorRequestId: number,
     requester: User
 }

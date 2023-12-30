@@ -9,6 +9,7 @@ import storageFireBase from "./firebase/storageFireBaseSlice";
 import { learnReducer as learn } from "./learn/learnSlice";
 import { userReducer as user } from "./user/userSlice";
 import { moderatorRequestReducer as moderatorRequest } from "./moderatorRequest/moderatorRequestSlice";
+import { controlModeratorRequestsReducer as controlModeratorRequests } from "./moderatorRequest/controlModeratorRequestsSlice";
 
 export const store = configureStore({
   reducer: {
@@ -21,7 +22,8 @@ export const store = configureStore({
     storageFireBase,
     learn,
     user,
-    moderatorRequest
+    moderatorRequest,
+    controlModeratorRequests
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

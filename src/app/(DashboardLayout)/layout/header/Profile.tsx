@@ -57,7 +57,8 @@ const Profile = () => {
 }, [user?.avatarUrl])
 
   useEffect(() => {
-    if(user){
+    if(!user) return;
+    if(user.authorities.find(a => a.authority === "Learner")){
       dispatch(getModeratorRequestThunk());
     }
   }, [user])

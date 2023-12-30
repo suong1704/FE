@@ -28,6 +28,11 @@ const Menuitems = [
     title: "My Modules",
     href: "/my-modules",
   },
+  {
+    id: uniqueId(),
+    title: "Moderator Requests",
+    href: "/admin/moderatorrequests",
+  }
 ];
 const HeaderItems = () => {
   const pathname = usePathname();
@@ -53,17 +58,22 @@ const HeaderItems = () => {
             return <NavGroup item={item} key={item.subheader} />;
           } else {
             if(
-              item.title === "My Modules"
+              item.title === "Moderator Requests"
               &&
-              user.authorities.find(a => a.authority === "Learner")
+              user.authorities.find(a => a.authority !== "Admin")
             ){
               return null;
             }
-            else{
+            if(
+              item.title === "My Modules"
+              &&
+              (user.authorities.find(a => a.authority !== "Moderator") && user.authorities.find(a => a.authority !== "Admin"))
+            ){
+              return null;
+            }
               return (
                 <NavItem item={item} key={item.id} pathDirect={pathDirect} />
               );
-            }
           }
         })}
       </List>
