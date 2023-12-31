@@ -47,7 +47,7 @@ const submitThunk = (lesson: Lesson, listeningAnswer: number[], speakingFile?: F
 
         if(!assignmentId) throw "assignmentId cant find";
 
-        let aiResult: null | any[] = null;
+        let aiResult: any = null;
         if(speakingFile){
             const form = new FormData();
             form.set("original_script", lesson.speakingContent.content);
@@ -64,9 +64,9 @@ const submitThunk = (lesson: Lesson, listeningAnswer: number[], speakingFile?: F
             assignmentId: assignmentId,
             lessonId: lesson.lessonId,
             listeningAnswer: listeningAnswer,
-            scoreSpeaking: aiResult ? aiResult[2] : 0,
-            context: aiResult ? aiResult[1] : "",
-            script: aiResult ? aiResult[3] : "",
+            scoreSpeaking: aiResult ? aiResult["percent_diff"] : 0,
+            context: aiResult ? aiResult["text_transcribed"] : "",
+            script: aiResult ? aiResult["html_output"] : "",
         }
         console.log(data);
         const res = await axios.post("/history", data);
